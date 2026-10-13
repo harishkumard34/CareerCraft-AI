@@ -1,0 +1,158 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Airbnb Design Tokens from DESIGN.md */
+  --airbnb-rausch: #ff385c;
+  --airbnb-rausch-active: #e00b41;
+  --airbnb-rausch-disabled: #ffd1da;
+  --airbnb-ink: #222222;
+  --airbnb-body: #3f3f3f;
+  --airbnb-muted: #6a6a6a;
+  --airbnb-hairline: #ebebeb;
+  --airbnb-hairline-strong: #dddddd;
+  --airbnb-canvas: #ffffff;
+  --airbnb-surface-soft: #f7f7f7;
+  --airbnb-surface-strong: #f2f2f2;
+  --airbnb-shadow: rgba(0, 0, 0, 0.04) 0 2px 6px, rgba(0, 0, 0, 0.08) 0 4px 12px;
+  --airbnb-shadow-hover: rgba(0, 0, 0, 0.06) 0 4px 14px, rgba(0, 0, 0, 0.12) 0 8px 24px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--airbnb-canvas);
+  color: var(--airbnb-ink);
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--airbnb-surface-soft);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--airbnb-hairline-strong);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--airbnb-muted);
+}
+
+/* Card Surface */
+.airbnb-card {
+  background: var(--airbnb-canvas);
+  border: 1px solid var(--airbnb-hairline);
+  border-radius: 14px;
+  box-shadow: var(--airbnb-shadow);
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.airbnb-card:hover {
+  box-shadow: var(--airbnb-shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* Selection Cards (Wizard Steps) */
+.step-card {
+  background: var(--airbnb-canvas);
+  border: 1px solid var(--airbnb-hairline);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.step-card:hover {
+  border-color: var(--airbnb-ink);
+  background: #fafafa;
+}
+
+.step-card.selected {
+  border-color: var(--airbnb-rausch);
+  background: #fff8f8;
+  box-shadow: 0 0 0 1px var(--airbnb-rausch), 0 4px 14px rgba(255, 56, 92, 0.12);
+}
+
+/* Rausch Primary Button */
+.btn-rausch {
+  background-color: var(--airbnb-rausch);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-rausch:hover {
+  background-color: var(--airbnb-rausch-active);
+}
+
+.btn-rausch:active {
+  transform: scale(0.98);
+}
+
+.btn-rausch:disabled {
+  background-color: var(--airbnb-rausch-disabled);
+  cursor: not-allowed;
+}
+
+/* Secondary Button */
+.btn-secondary {
+  background-color: var(--airbnb-canvas);
+  color: var(--airbnb-ink);
+  border: 1px solid var(--airbnb-ink);
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background-color: var(--airbnb-surface-soft);
+}
+
+/* Interactive Chips */
+.chip {
+  background: var(--airbnb-surface-soft);
+  color: var(--airbnb-body);
+  border: 1px solid var(--airbnb-hairline-strong);
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  user-select: none;
+}
+
+.chip:hover {
+  border-color: var(--airbnb-ink);
+  color: var(--airbnb-ink);
+}
+
+.chip.active {
+  background: var(--airbnb-ink);
+  color: #ffffff;
+  border-color: var(--airbnb-ink);
+}
+
+/* Print/PDF Export styling */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
