@@ -166,7 +166,7 @@ Please produce a comprehensive, realistic multi-phase roadmap in strict JSON for
             from google import genai
             client = genai.Client(api_key=GEMINI_API_KEY)
             response = client.models.generate_content(
-                model='gemini-2.0-flash',
+                model='gemini-3.8-flash',
                 contents=user_prompt,
                 config={
                     'system_instruction': SYSTEM_PROMPT,
