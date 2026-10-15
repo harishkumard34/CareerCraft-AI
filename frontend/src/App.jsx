@@ -153,7 +153,7 @@ function App() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ fontSize: '13px', color: '#6a6a6a', display: 'none', '@media (minWidth: 640px)': { display: 'inline' } }}>
+            <span className="header-tagline">
               Smart Roadmap Architect
             </span>
             <div style={{
@@ -177,94 +177,151 @@ function App() {
           <ResultsPage roadmap={roadmap} onReset={handleReset} />
         ) : (
           <div className="airbnb-card" style={{ padding: '32px 28px' }}>
-            {/* Wizard Header Progress */}
-            <ProgressBar currentStep={step} totalSteps={5} onStepClick={(s) => setStep(s)} />
-
-            {/* Error Banner */}
-            {error && (
-              <div style={{
-                background: '#fff5f5',
-                border: '1px solid #fed7d7',
-                color: '#c53030',
-                padding: '14px 18px',
-                borderRadius: '12px',
-                marginBottom: '24px',
-                fontSize: '14px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px'
-              }}>
-                <span>⚠️ {error}</span>
-              </div>
-            )}
-
-            {/* Step Views */}
-            <div style={{ minHeight: '360px' }}>
-              {step === 1 && <Step1Education formData={formData} updateFormData={updateFormData} />}
-              {step === 2 && <Step2Skills formData={formData} updateFormData={updateFormData} />}
-              {step === 3 && <Step3Role formData={formData} updateFormData={updateFormData} />}
-              {step === 4 && <Step4StudyTime formData={formData} updateFormData={updateFormData} />}
-              {step === 5 && <Step5Timeline formData={formData} updateFormData={updateFormData} />}
-            </div>
-
-            {/* Navigation Actions Bar */}
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginTop: '36px',
-              paddingTop: '20px',
-              borderTop: '1px solid #ebebeb'
-            }}>
-              {step > 1 ? (
-                <button
-                  type="button"
-                  onClick={handleBack}
-                  disabled={loading}
-                  className="btn-secondary"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '12px 20px',
-                    fontSize: '14px'
-                  }}
-                >
-                  <ArrowLeft size={16} /> Back
-                </button>
-              ) : (
-                <div />
-              )}
-
-              <button
-                type="button"
-                onClick={handleNext}
-                disabled={loading}
-                className="btn-rausch"
-                style={{
-                  display: 'inline-flex',
+            {loading ? (
+              <div style={{ padding: '48px 16px', textAlign: 'center' }}>
+                <div style={{
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '50%',
+                  background: '#fff0f2',
+                  color: '#ff385c',
+                  display: 'flex',
                   alignItems: 'center',
-                  gap: '8px',
-                  padding: '14px 28px',
-                  fontSize: '15px'
-                }}
-              >
-                {loading ? (
-                  <>
-                    <Loader2 size={18} className="animate-spin" style={{ animation: 'spin 1s linear infinite' }} />
-                    Generating with Gemini AI...
-                  </>
-                ) : step === 5 ? (
-                  <>
-                    Generate AI Roadmap <Sparkles size={18} />
-                  </>
-                ) : (
-                  <>
-                    Continue <ArrowRight size={18} />
-                  </>
+                  justifyContent: 'center',
+                  margin: '0 auto 20px',
+                  boxShadow: '0 0 0 10px rgba(255, 56, 92, 0.08)'
+                }} className="animate-pulse-glow">
+                  <Sparkles size={32} />
+                </div>
+                <h3 style={{ fontSize: '22px', fontWeight: '700', color: '#222222', marginBottom: '8px' }}>
+                  Crafting your personalized {formData.customRole || formData.targetRole} Roadmap...
+                </h3>
+                <p style={{ color: '#6a6a6a', fontSize: '14px', maxWidth: '480px', margin: '0 auto 28px', lineHeight: '1.5' }}>
+                  Gemini AI is analyzing your education, existing skills, and {formData.timeline} commitment to structure your step-by-step career plan.
+                </p>
+                <div style={{
+                  maxWidth: '380px',
+                  margin: '0 auto',
+                  background: '#f7f7f7',
+                  border: '1px solid #ebebeb',
+                  borderRadius: '12px',
+                  padding: '16px 20px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                  textAlign: 'left'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#222222', fontWeight: '500' }}>
+                    <CheckCircle size={16} color="#ff385c" />
+                    <span>Mapping skills & prerequisite calibrations</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#222222', fontWeight: '500' }}>
+                    <Loader2 size={16} className="animate-spin" color="#ff385c" />
+                    <span>Generating sequential learning phases</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#888888' }}>
+                    <Clock size={16} color="#cccccc" />
+                    <span>Curating top free tutorials & capstone projects</span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Wizard Header Progress */}
+                <ProgressBar currentStep={step} totalSteps={5} onStepClick={(s) => setStep(s)} />
+
+                {/* Error Banner */}
+                {error && (
+                  <div style={{
+                    background: '#fff5f5',
+                    border: '1px solid #fed7d7',
+                    color: '#c53030',
+                    padding: '14px 18px',
+                    borderRadius: '12px',
+                    marginBottom: '24px',
+                    fontSize: '14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '10px',
+                    flexWrap: 'wrap'
+                  }}>
+                    <span>⚠️ {error}</span>
+                    <button
+                      type="button"
+                      onClick={handleNext}
+                      className="btn-secondary"
+                      style={{ padding: '6px 12px', fontSize: '12px' }}
+                    >
+                      Retry
+                    </button>
+                  </div>
                 )}
-              </button>
-            </div>
+
+                {/* Step Views */}
+                <div style={{ minHeight: '360px' }}>
+                  {step === 1 && <Step1Education formData={formData} updateFormData={updateFormData} />}
+                  {step === 2 && <Step2Skills formData={formData} updateFormData={updateFormData} />}
+                  {step === 3 && <Step3Role formData={formData} updateFormData={updateFormData} />}
+                  {step === 4 && <Step4StudyTime formData={formData} updateFormData={updateFormData} />}
+                  {step === 5 && <Step5Timeline formData={formData} updateFormData={updateFormData} />}
+                </div>
+
+                {/* Navigation Actions Bar */}
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginTop: '36px',
+                  paddingTop: '20px',
+                  borderTop: '1px solid #ebebeb'
+                }}>
+                  {step > 1 ? (
+                    <button
+                      type="button"
+                      onClick={handleBack}
+                      disabled={loading}
+                      className="btn-secondary"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '12px 20px',
+                        fontSize: '14px'
+                      }}
+                    >
+                      <ArrowLeft size={16} /> Back
+                    </button>
+                  ) : (
+                    <div />
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    disabled={loading}
+                    className="btn-rausch"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '14px 28px',
+                      fontSize: '15px'
+                    }}
+                  >
+                    {step === 5 ? (
+                      <>
+                        Generate AI Roadmap <Sparkles size={18} />
+                      </>
+                    ) : (
+                      <>
+                        Continue <ArrowRight size={18} />
+                      </>
+                    )}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         )}
       </main>

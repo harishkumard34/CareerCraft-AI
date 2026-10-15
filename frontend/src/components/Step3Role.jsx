@@ -24,7 +24,7 @@ const Step3Role = ({ formData, updateFormData }) => {
   const handleCustomChange = (val) => {
     updateFormData({
       customRole: val,
-      targetRole: val ? val : 'AI / ML Engineer'
+      targetRole: val ? val : (formData.targetRole || 'AI / ML Engineer')
     });
   };
 
