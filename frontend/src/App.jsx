@@ -56,11 +56,17 @@ function App() {
   const generateRoadmap = async () => {
     setLoading(true);
     setError(null);
+    
+    // 30 second timeout — prevents infinite loading on Render cold starts
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
       const response = await fetch(`${apiUrl}/api/generate-roadmap`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
           education: formData.education,
           education_detail: formData.educationDetail,
@@ -75,8 +81,10 @@ function App() {
         }),
       });
 
+      clearTimeout(timeoutId);
+
       if (!response.ok) {
-        throw new Error(`Server returned ${response.status}: Failed to generate roadmap`);
+        throw new Error(`Server error ${response.status}`);
       }
 
       const data = await response.json();
@@ -95,8 +103,13 @@ function App() {
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
+      clearTimeout(timeoutId);
       console.error('Generation error:', err);
-      setError('Could not connect to backend server. Ensure backend is running at http://localhost:8000');
+      if (err.name === 'AbortError') {
+        setError('Request timed out — the AI is taking too long. Please try again in a few seconds.');
+      } else {
+        setError('Could not generate roadmap. Please check your connection and try again.');
+      }
     } finally {
       setLoading(false);
     }

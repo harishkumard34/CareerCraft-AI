@@ -1,5 +1,7 @@
 import os
 import json
+import signal
+import threading
 from dotenv import load_dotenv
 from schemas import RoadmapRequest, RoadmapResponse
 
@@ -157,20 +159,42 @@ Please produce a comprehensive, realistic multi-phase roadmap in strict JSON for
     if not GEMINI_API_KEY:
         return generate_fallback_roadmap(request)
 
+    result_holder = {}
+
+    def call_gemini():
+        try:
+            from google import genai
+            client = genai.Client(api_key=GEMINI_API_KEY)
+            response = client.models.generate_content(
+                model='gemini-2.0-flash',
+                contents=user_prompt,
+                config={
+                    'system_instruction': SYSTEM_PROMPT,
+                    'response_mime_type': 'application/json',
+                    'temperature': 0.65,
+                }
+            )
+            result_holder['data'] = json.loads(response.text)
+        except Exception as e:
+            result_holder['error'] = str(e)
+            print(f"Gemini call error: {e}")
+
+    # Run Gemini call in thread with 25s timeout (Render kills at 30s)
+    thread = threading.Thread(target=call_gemini)
+    thread.start()
+    thread.join(timeout=25)
+
+    if thread.is_alive():
+        # Gemini timed out — return fallback immediately
+        print("Gemini API timed out after 25s — returning fallback roadmap")
+        return generate_fallback_roadmap(request)
+
+    if 'error' in result_holder:
+        print(f"Gemini API failed: {result_holder['error']} — returning fallback")
+        return generate_fallback_roadmap(request)
+
     try:
-        from google import genai
-        client = genai.Client(api_key=GEMINI_API_KEY)
-        response = client.models.generate_content(
-            model='gemini-3.8-flash',
-            contents=user_prompt,
-            config={
-                'system_instruction': SYSTEM_PROMPT,
-                'response_mime_type': 'application/json',
-                'temperature': 0.7,
-            }
-        )
-        data = json.loads(response.text)
-        return RoadmapResponse(**data)
+        return RoadmapResponse(**result_holder['data'])
     except Exception as e:
-        print(f"Gemini API call failed or fallback triggered: {e}")
+        print(f"Response parse error: {e} — returning fallback")
         return generate_fallback_roadmap(request)
