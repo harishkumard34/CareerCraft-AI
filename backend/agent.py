@@ -162,22 +162,29 @@ Please produce a comprehensive, realistic multi-phase roadmap in strict JSON for
     result_holder = {}
 
     def call_gemini():
-        try:
-            from google import genai
-            client = genai.Client(api_key=GEMINI_API_KEY)
-            response = client.models.generate_content(
-                model='gemini-3.8-flash',
-                contents=user_prompt,
-                config={
-                    'system_instruction': SYSTEM_PROMPT,
-                    'response_mime_type': 'application/json',
-                    'temperature': 0.65,
-                }
-            )
-            result_holder['data'] = json.loads(response.text)
-        except Exception as e:
-            result_holder['error'] = str(e)
-            print(f"Gemini call error: {e}")
+        from google import genai
+        client = genai.Client(api_key=GEMINI_API_KEY)
+        candidate_models = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.5-pro']
+        
+        last_error = None
+        for model_name in candidate_models:
+            try:
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=user_prompt,
+                    config={
+                        'system_instruction': SYSTEM_PROMPT,
+                        'response_mime_type': 'application/json',
+                        'temperature': 0.65,
+                    }
+                )
+                result_holder['data'] = json.loads(response.text)
+                return
+            except Exception as e:
+                last_error = e
+                print(f"Model {model_name} failed ({e}), trying next...")
+        
+        result_holder['error'] = str(last_error)
 
     # Run Gemini call in thread with 25s timeout (Render kills at 30s)
     thread = threading.Thread(target=call_gemini)
